@@ -1,5 +1,6 @@
 ﻿using LeitorExcelV3.Models;
 using OfficeOpenXml;
+using System.Text.RegularExpressions;
 
 namespace LeitorExcelV3.Services;
 
@@ -13,6 +14,20 @@ public class ValidatorPloomesService : Validator
 
     public override void Execute()
     {
-        throw new NotImplementedException();
+        List<Dictionary<string, string>> fields = WorksheetService.GetWorksheetPloomesFields(Worksheet);
+        foreach (var field in fields)
+        {
+            ExcelRange cell = Worksheet.Cells[field["cordenate"]];
+
+            if (Regex.IsMatch(_deserializedRequest, field["name"]))
+            {
+                WorksheetService.SetCellAsFind(cell);
+            }
+            else
+            {
+                WorksheetService.SetCellAsNotFind(cell);
+            }
+            NextValidator?.Execute();
+        }
     }
 }

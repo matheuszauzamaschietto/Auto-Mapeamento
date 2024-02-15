@@ -27,7 +27,7 @@ public class ValidatorClientService : Validator
             {
                 WorksheetService.SetCellAsNotFind(cell);
             }
-
         }
+        NextValidator?.Execute();
     }
 }

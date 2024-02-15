@@ -7,11 +7,13 @@ public class ConnectionInfos
 {
     public Dictionary<string, string> ClientHeaders { get; }
     public HttpMethod HttpMethod { get; set; }
+    public string PloomesUrl { get; }
     public string Url { get; set; }
     public string Body { get; set; }
     public Dictionary<string, string> PloomesHeader { get; set; }
     public ConnectionInfos(ExcelWorksheets worksheets)
     {
+        PloomesUrl = @"https://api2.ploomes.com/Fields?$expand=OptionsTable($expand=Options),Type";
         ExcelWorksheet deafultConnectionWorkSheet = worksheets.FirstOrDefault(wk => wk.Name == WorksheetDefaultName.Autentication);
         ClientHeaders = GetHeaders(deafultConnectionWorkSheet);
         PloomesHeader = GetPloomesHeader(deafultConnectionWorkSheet);

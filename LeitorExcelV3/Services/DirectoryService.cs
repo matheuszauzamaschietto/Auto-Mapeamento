@@ -14,7 +14,7 @@ public class DirectoryService
 
     private (string tmpDirectory, string file) GetDirectoryAndFilePath(IFormFile formFile)
     {
-        string directoryPath = $"{Directory.GetCurrentDirectory()}/excel/worksheets/{Guid.NewGuid()}/";
+        string directoryPath = $"{Path.GetTempPath()}/excel/worksheets/{Guid.NewGuid()}/";
         string filePath = directoryPath + formFile.Name + " - validated";
         return (directoryPath, filePath);
     }

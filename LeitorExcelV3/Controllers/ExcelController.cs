@@ -44,9 +44,10 @@ public class ExcelController : Controller
                     if (connectionInfos.Url is null || connectionInfos.HttpMethod is null)
                         continue;
 
-                    RequestService requestService = new(_httpClientFactory.CreateClient("client"));
+                    RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
-                    IValidator clientValidator = new ValidatorClientService(worksheet, _worksheetService, await requestService.Send(connectionInfos));
+                    IValidator clientValidator = new ValidatorClientService(worksheet, _worksheetService, await requestService.SendClient(connectionInfos));
+                    clientValidator.SetNext(new ValidatorPloomesService(worksheet, _worksheetService, await requestService.SendPloomes(connectionInfos)));
                     clientValidator.Execute();
                 }
                 package.SaveAs(filePath);

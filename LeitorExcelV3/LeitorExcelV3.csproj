@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
+    <Folder Include="excel\worksheets\" />
   </ItemGroup>
 
 </Project>
