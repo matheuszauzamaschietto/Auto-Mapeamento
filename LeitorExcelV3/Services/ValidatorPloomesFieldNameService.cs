@@ -4,22 +4,22 @@ using System.Text.RegularExpressions;
 
 namespace LeitorExcelV3.Services;
 
-public class ValidatorPloomesService : Validator
+public class ValidatorPloomesFieldNameService : Validator
 {
-    private readonly string _deserializedRequest;
-    public ValidatorPloomesService(ExcelWorksheet worksheet ,WorksheetService worksheetService, string deserializedRequest) : base(worksheet, worksheetService)
+    private readonly List<PlooFieldsModel> _plooFields;
+    public ValidatorPloomesFieldNameService(ExcelWorksheet worksheet ,WorksheetService worksheetService, List<PlooFieldsModel> plooFields) : base(worksheet, worksheetService)
     {
-        _deserializedRequest = deserializedRequest;
+        _plooFields = plooFields;
     }
 
     public override void Execute()
     {
-        List<Dictionary<string, string>> fields = WorksheetService.GetWorksheetPloomesFields(Worksheet);
+        List<Dictionary<string, string>> fields = WorksheetService.GetWorksheetCellsStillBeEmpty(Worksheet, "F", 7);
         foreach (var field in fields)
         {
             ExcelRange cell = Worksheet.Cells[field["cordenate"]];
 
-            if (Regex.IsMatch(_deserializedRequest, field["name"]))
+            if(_plooFields.FirstOrDefault(f => f.Name == field["name"]) is not null)
             {
                 WorksheetService.SetCellAsFind(cell);
             }

@@ -34,24 +34,27 @@ public class ExcelController : Controller
         {
             await formFile.CopyToAsync(stream);
 
-            using (var package = new ExcelPackage(stream))
+            using var package = new ExcelPackage(stream);
+            ConnectionInfos connectionInfos = new(package.Workbook.Worksheets);
+
+            foreach (var worksheet in package.Workbook.Worksheets)
             {
-                ConnectionInfos connectionInfos = new(package.Workbook.Worksheets);
+                connectionInfos.SetConnectionInfo(worksheet);
+                if (connectionInfos.Url is null || connectionInfos.HttpMethod is null)
+                    continue;
 
-                foreach (var worksheet in package.Workbook.Worksheets)
-                {
-                    connectionInfos.SetConnectionInfo(worksheet);
-                    if (connectionInfos.Url is null || connectionInfos.HttpMethod is null)
-                        continue;
+                RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
-                    RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
+                List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<List<PlooFieldsModel>>(connectionInfos);
 
-                    IValidator clientValidator = new ValidatorClientService(worksheet, _worksheetService, await requestService.SendClient(connectionInfos));
-                    clientValidator.SetNext(new ValidatorPloomesService(worksheet, _worksheetService, await requestService.SendPloomes(connectionInfos)));
-                    clientValidator.Execute();
-                }
-                package.SaveAs(filePath);
+                IValidator clientFieldNameValidator = new ValidatorClientFieldNameService(worksheet, _worksheetService, await requestService.SendClient(connectionInfos));
+                IValidator ploomesFieldNameValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
+                IValidator ploomesFieldTypeValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
+                clientFieldNameValidator.SetNext(ploomesFieldNameValidator);
+                ploomesFieldNameValidator.SetNext(ploomesFieldTypeValidator);
+                clientFieldNameValidator.Execute();
             }
+            package.SaveAs(filePath);
         }
         byte[] bytes = System.IO.File.ReadAllBytes(filePath);
 

@@ -4,4 +4,5 @@ public class PlooFieldsModel
 {
     public string Key { get; set; }
     public string Name { get; set; }
+    public int TypeId { get; set; }
 }
