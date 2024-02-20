@@ -27,7 +27,7 @@ public class ValidatorPloomesFieldNameService : Validator
             {
                 WorksheetService.SetCellAsNotFind(cell);
             }
-            NextValidator?.Execute();
         }
+        NextValidator?.Execute();
     }
 }

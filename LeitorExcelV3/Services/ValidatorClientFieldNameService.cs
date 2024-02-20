@@ -19,7 +19,7 @@ public class ValidatorClientFieldNameService : Validator
         {
             ExcelRange cell = Worksheet.Cells[field["cordenate"]];
 
-            if (Regex.IsMatch(_deserializedRequest, $"\\\"{field["name"]}\\\""))
+            if (Regex.IsMatch(_deserializedRequest, $"\"{field["name"]}\""))
             {
                 WorksheetService.SetCellAsFind(cell);
             }

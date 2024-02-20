@@ -30,7 +30,7 @@ public class WorksheetService
         {
             cellValue = worksheet.Cells[column + row].GetValue<string>() ?? string.Empty;
             if (cellValue != string.Empty && cellValue != null)
-                sheetFields.Add(new Dictionary<string, string>() { { "name", $"\"{cellValue}\"" }, { "cordenate", column + row } });
+                sheetFields.Add(new Dictionary<string, string>() { { "name", $"{cellValue}" }, { "cordenate", column + row } });
             row++;
         } while (cellValue != string.Empty);
         return sheetFields;

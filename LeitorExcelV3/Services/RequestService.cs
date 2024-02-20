@@ -22,10 +22,10 @@ public class RequestService
         return await Send(httpMessage);
     }
 
-    public async Task<T?> SendPloomes<T>(ConnectionInfos connectionInfo)
+    public async Task<List<T>?> SendPloomes<T>(ConnectionInfos connectionInfo)
     {
         HttpRequestMessage httpMessage = _httpRequestMessageFactory.Create(Enums.HttpRequestMessageFactoryEnum.PLOOMES, (connectionInfo));
-        return await Send<T>(httpMessage);
+        return (await Send<PlooBaseModel<T>?>(httpMessage)).Value;
     }
 
     private async Task<string> Send(HttpRequestMessage httpMessage)

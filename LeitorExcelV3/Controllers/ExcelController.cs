@@ -45,11 +45,11 @@ public class ExcelController : Controller
 
                 RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
-                List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<List<PlooFieldsModel>>(connectionInfos);
+                List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<PlooFieldsModel>(connectionInfos);
 
                 IValidator clientFieldNameValidator = new ValidatorClientFieldNameService(worksheet, _worksheetService, await requestService.SendClient(connectionInfos));
                 IValidator ploomesFieldNameValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
-                IValidator ploomesFieldTypeValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
+                IValidator ploomesFieldTypeValidator = new ValidatorPloomesFieldTypeService (worksheet, _worksheetService, plooFields);
                 clientFieldNameValidator.SetNext(ploomesFieldNameValidator);
                 ploomesFieldNameValidator.SetNext(ploomesFieldTypeValidator);
                 clientFieldNameValidator.Execute();
