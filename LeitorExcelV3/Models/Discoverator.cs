@@ -4,16 +4,16 @@ using OfficeOpenXml;
 
 namespace LeitorExcelV3.Models;
 
-public abstract class Discoverator : ChainOfResponsability
+public abstract class Validator : ChainOfResponsability
 {
     protected WorksheetService WorksheetService { get; }
     protected ChainOfResponsability NextValidator { get; set; }
     protected ExcelWorksheet Worksheet { get; set; }
-    public Discoverator(ExcelWorksheet worksheet, WorksheetService worksheetService)
+    public Validator(ExcelWorksheet worksheet, WorksheetService worksheetService)
     {
         WorksheetService = worksheetService;
         Worksheet = worksheet;
-    } 
+    }
 
     public void SetNext(ChainOfResponsability validator)
     {

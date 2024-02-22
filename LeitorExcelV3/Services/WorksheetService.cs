@@ -35,4 +35,22 @@ public class WorksheetService
         } while (cellValue != string.Empty);
         return sheetFields;
     }
+
+    public ExcelWorksheet WriteAdditionalFields(ExcelWorksheet worksheet, string column, int row, List<string> fieldsToWrite)
+    {
+        int fieldsWritedCount = 0;
+        do
+        {
+            var cellValue = worksheet.Cells[column + row];
+            
+            if ((cellValue.GetValue<string>() ?? string.Empty) == string.Empty)
+            {
+                cellValue.Value = fieldsToWrite[fieldsWritedCount];
+                fieldsWritedCount++;
+            }
+                
+            row++;
+        } while (fieldsWritedCount < fieldsToWrite.Count);
+        return worksheet;
+    }
 }

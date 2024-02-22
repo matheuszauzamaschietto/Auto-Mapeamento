@@ -2,12 +2,12 @@
 using OfficeOpenXml;
 using System.Text.RegularExpressions;
 
-namespace LeitorExcelV3.Services;
+namespace LeitorExcelV3.Services.Validatiion;
 
 public class ValidatorPloomesFieldTypeService : Validator
 {
     private readonly List<PlooFieldsModel> _plooFields;
-    public ValidatorPloomesFieldTypeService(ExcelWorksheet worksheet ,WorksheetService worksheetService, List<PlooFieldsModel> plooFields) : base(worksheet, worksheetService)
+    public ValidatorPloomesFieldTypeService(ExcelWorksheet worksheet, WorksheetService worksheetService, List<PlooFieldsModel> plooFields) : base(worksheet, worksheetService)
     {
         _plooFields = plooFields;
     }
@@ -16,7 +16,7 @@ public class ValidatorPloomesFieldTypeService : Validator
     {
         List<Dictionary<string, string>> fieldsType = WorksheetService.GetWorksheetCellsStillBeEmpty(Worksheet, "C", 7);
         List<Dictionary<string, string>> fieldsName = WorksheetService.GetWorksheetCellsStillBeEmpty(Worksheet, "F", 7);
-        for (int i = 0; i < fieldsType.Count; i++) 
+        for (int i = 0; i < fieldsType.Count; i++)
         {
             var fieldName = fieldsName[i];
             var fieldType = fieldsType[i];

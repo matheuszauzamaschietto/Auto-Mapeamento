@@ -1,7 +1,9 @@
 ﻿using LeitorExcelV3.Enums;
+using LeitorExcelV3.Interfaces;
 using LeitorExcelV3.Models;
 using LeitorExcelV3.Services;
-using LeitorExcelV3.Services.Interfaces;
+using LeitorExcelV3.Services.Discovery;
+using LeitorExcelV3.Services.Validatiion;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 namespace LeitorExcelV3.Controllers;
@@ -29,7 +31,6 @@ public class ExcelController : Controller
         }
 
         string filePath = _directoryService.CreateDiretory(formFile);
-
         using (var stream = new MemoryStream())
         {
             await formFile.CopyToAsync(stream);
@@ -46,13 +47,25 @@ public class ExcelController : Controller
                 RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
                 List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<PlooFieldsModel>(connectionInfos);
+                string clientFields = await requestService.SendClient(connectionInfos);
 
-                IValidator clientFieldNameValidator = new ValidatorClientFieldNameService(worksheet, _worksheetService, await requestService.SendClient(connectionInfos));
-                IValidator ploomesFieldNameValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
-                IValidator ploomesFieldTypeValidator = new ValidatorPloomesFieldTypeService (worksheet, _worksheetService, plooFields);
+                #region Discovery
+
+                ChainOfResponsability clientFieldsDiscovery = new DiscoveryClientFieldsService(worksheet, _worksheetService, clientFields);
+                clientFieldsDiscovery.Execute();
+
+                #endregion
+
+                #region Validation
+
+                ChainOfResponsability clientFieldNameValidator = new ValidatorClientFieldNameService(worksheet, _worksheetService, clientFields);
+                ChainOfResponsability ploomesFieldNameValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
+                ChainOfResponsability ploomesFieldTypeValidator = new ValidatorPloomesFieldTypeService (worksheet, _worksheetService, plooFields);
                 clientFieldNameValidator.SetNext(ploomesFieldNameValidator);
                 ploomesFieldNameValidator.SetNext(ploomesFieldTypeValidator);
                 clientFieldNameValidator.Execute();
+
+                #endregion Validation
             }
             package.SaveAs(filePath);
         }
@@ -60,6 +73,6 @@ public class ExcelController : Controller
 
         _directoryService.DeleteDirectory();
 
-        return File(bytes, formFile.ContentType, formFile.Name+" - validated");
+        return File(bytes, formFile.ContentType, formFile.Name + " - validated");
     }
 }

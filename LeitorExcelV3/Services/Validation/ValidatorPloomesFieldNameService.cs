@@ -2,12 +2,12 @@
 using OfficeOpenXml;
 using System.Text.RegularExpressions;
 
-namespace LeitorExcelV3.Services;
+namespace LeitorExcelV3.Services.Validatiion;
 
 public class ValidatorPloomesFieldNameService : Validator
 {
     private readonly List<PlooFieldsModel> _plooFields;
-    public ValidatorPloomesFieldNameService(ExcelWorksheet worksheet ,WorksheetService worksheetService, List<PlooFieldsModel> plooFields) : base(worksheet, worksheetService)
+    public ValidatorPloomesFieldNameService(ExcelWorksheet worksheet, WorksheetService worksheetService, List<PlooFieldsModel> plooFields) : base(worksheet, worksheetService)
     {
         _plooFields = plooFields;
     }
@@ -19,7 +19,7 @@ public class ValidatorPloomesFieldNameService : Validator
         {
             ExcelRange cell = Worksheet.Cells[field["cordenate"]];
 
-            if(_plooFields.FirstOrDefault(f => f.Name == field["name"]) is not null)
+            if (_plooFields.FirstOrDefault(f => f.Name == field["name"]) is not null)
             {
                 WorksheetService.SetCellAsFind(cell);
             }
