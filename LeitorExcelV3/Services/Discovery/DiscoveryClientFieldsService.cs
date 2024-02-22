@@ -1,6 +1,7 @@
 ﻿using LeitorExcelV3.Models;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -29,12 +30,33 @@ public class DiscoveryClientFieldsService: Discoverator
         List<string> fields = new List<string>();
         JObject jsonFields = JObject.Parse(_deserializedRequest);
         // jsonField.Value.Type // Adicionar pesquisa por baixa granularidade
-        foreach (var jsonField in jsonFields)
-        {
-            fields.Add(jsonField.Key);
-        }
+
+            //fields.Add(jsonField.Key);
+        fields.AddRange(GetFieldsPath("$", jsonFields, fields));
+        
 
         return fields;
+    }
+
+    private List<string> GetFieldsPath(string jsonPath, JObject jsonObject, List<string> fields)
+    {
+        foreach(var field in jsonObject)
+        {
+            if(field.Value.Type != JTokenType.Object && field.Value.Type != JTokenType.Array)
+            {
+                fields.Add(MountJsonPath(jsonPath, field.Key));
+            }
+            else if (field.Value.Type == JTokenType.Object)
+            {
+                GetFieldsPath(MountJsonPath(jsonPath, field.Key), (JObject)field.Value, fields);
+            }
+        }
+        return fields;
+    }
+
+    private string MountJsonPath(string jsonPath, string newJsonExtension)
+    {
+        return jsonPath + "." + newJsonExtension;
     }
 
 
