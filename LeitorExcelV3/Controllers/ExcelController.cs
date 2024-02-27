@@ -4,6 +4,7 @@ using LeitorExcelV3.Models;
 using LeitorExcelV3.Services;
 using LeitorExcelV3.Services.Discovery;
 using LeitorExcelV3.Services.Validatiion;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 namespace LeitorExcelV3.Controllers;
@@ -28,7 +29,7 @@ public class ExcelController : Controller
         if (formFile == null || formFile.Length == 0)
         {
             return BadRequest("Arquivo não enviado");
-        }
+        } 
 
         string filePath = _directoryService.CreateDiretory(formFile);
         using (var stream = new MemoryStream())
@@ -40,32 +41,36 @@ public class ExcelController : Controller
 
             foreach (var worksheet in package.Workbook.Worksheets)
             {
-                connectionInfos.SetConnectionInfo(worksheet);
-                if (connectionInfos.Url is null || connectionInfos.HttpMethod is null)
+                connectionInfos.ClientConnection.SetConnectionInfo(worksheet);
+                connectionInfos.PloomesConnection.SetEntity(worksheet);
+
+                if (connectionInfos.ClientConnection.Url is null || connectionInfos.ClientConnection.HttpMethod is null || connectionInfos.PloomesConnection.EntityId is null)
                     continue;
 
-                RequestService requestService = new(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
+                PhasesModel phases = new(worksheet);
+                RequestService requestService = new (_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
                 List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<PlooFieldsModel>(connectionInfos);
-                string clientFields = await requestService.SendClient(connectionInfos);
+                var clientResponse = await requestService.SendClient(connectionInfos);
 
-                #region Discovery
 
-                ChainOfResponsability clientFieldsDiscovery = new DiscoveryClientFieldsService(worksheet, _worksheetService, clientFields);
-                clientFieldsDiscovery.Execute();
 
-                #endregion
+                if (phases.DoDiscovery)
+                {
+                    IPrimaryService discovery = new DiscoveryService(worksheet, clientResponse.serializedBody, _worksheetService);
+                    discovery.Execute();
+                }
 
-                #region Validation
+                if (phases.DoValidation)
+                {
+                    IPrimaryService Validation = new ValidationService(worksheet, _worksheetService, clientResponse.serializedBody, plooFields);
+                    Validation.Execute();
+                }
 
-                ChainOfResponsability clientFieldNameValidator = new ValidatorClientFieldNameService(worksheet, _worksheetService, clientFields);
-                ChainOfResponsability ploomesFieldNameValidator = new ValidatorPloomesFieldNameService(worksheet, _worksheetService, plooFields);
-                ChainOfResponsability ploomesFieldTypeValidator = new ValidatorPloomesFieldTypeService (worksheet, _worksheetService, plooFields);
-                clientFieldNameValidator.SetNext(ploomesFieldNameValidator);
-                ploomesFieldNameValidator.SetNext(ploomesFieldTypeValidator);
-                clientFieldNameValidator.Execute();
-
-                #endregion Validation
+                if (phases.DoImplementation)
+                {
+                    Console.WriteLine("TO IMPLEMENTANDO");
+                }
             }
             package.SaveAs(filePath);
         }

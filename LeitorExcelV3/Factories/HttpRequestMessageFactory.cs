@@ -29,8 +29,8 @@ public class HttpRequestMessageFactory
     {
         HttpRequestMessage httpMessage = new();
         httpMessage.Method = HttpMethod.Get;
-        SetHeaders(connectionInfo.PloomesHeader, httpMessage.Headers);
-        httpMessage.RequestUri = new Uri(connectionInfo.PloomesUrl);
+        SetHeaders(connectionInfo.PloomesConnection.Headers, httpMessage.Headers);
+        httpMessage.RequestUri = new Uri(connectionInfo.PloomesConnection.Url);
         return httpMessage;
     }
 
@@ -38,10 +38,10 @@ public class HttpRequestMessageFactory
     private HttpRequestMessage CreateClientMessage(ConnectionInfos connectionInfo)
     {
         HttpRequestMessage httpMessage = new();
-        httpMessage.Method = connectionInfo.HttpMethod;
-        httpMessage.Content = new StringContent(connectionInfo.Body ?? "");
-        SetHeaders(connectionInfo.ClientHeaders, httpMessage.Headers);
-        httpMessage.RequestUri = new Uri(connectionInfo.Url);
+        httpMessage.Method = connectionInfo.ClientConnection.HttpMethod;
+        httpMessage.Content = new StringContent(connectionInfo.ClientConnection.Body ?? "");
+        SetHeaders(connectionInfo.ClientConnection.Headers, httpMessage.Headers);
+        httpMessage.RequestUri = new Uri(connectionInfo.ClientConnection.Url);
         return httpMessage;
     }
 

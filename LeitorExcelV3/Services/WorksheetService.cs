@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml.Style;
 using OfficeOpenXml;
+using System.Drawing;
 
 namespace LeitorExcelV3.Services;
 
@@ -14,6 +15,12 @@ public class WorksheetService
     {
         cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
         cell.Style.Fill.BackgroundColor.SetColor(color: System.Drawing.Color.Red);
+    }
+
+    public void SetCellColor(ExcelRange cell, Color cor)
+    {
+        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+        cell.Style.Fill.BackgroundColor.SetColor(color: cor);
     }
 
     public void SetCellAsFind(ExcelRange cell)

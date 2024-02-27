@@ -1,5 +1,7 @@
 ﻿using LeitorExcelV3.Models;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
+using System.Drawing;
 using System.Text.RegularExpressions;
 
 namespace LeitorExcelV3.Services.Validatiion;
@@ -19,9 +21,17 @@ public class ValidatorClientFieldNameService : Validator
         {
             ExcelRange cell = Worksheet.Cells[field["cordenate"]];
 
-            if (Regex.IsMatch(_deserializedRequest, $"\"{field["name"]}\""))
+            string[] fieldPath = field["name"].Replace("$.", "").Split(".");
+
+            bool fieldIsValid = validateField(fieldPath.ToList(), JObject.Parse(_deserializedRequest));
+
+            if (fieldIsValid)
             {
-                WorksheetService.SetCellAsFind(cell);
+                WorksheetService.SetCellColor(cell, Color.Green);
+            }
+            else if (Regex.IsMatch(_deserializedRequest, $"\"{fieldPath.Last()}\""))
+            {
+                WorksheetService.SetCellColor(cell, Color.Yellow);
             }
             else
             {
@@ -29,5 +39,34 @@ public class ValidatorClientFieldNameService : Validator
             }
         }
         NextValidator?.Execute();
+    }
+
+    private bool validateField(List<string> fieldPathSplited, JObject webServiceJson)
+    {
+        try
+        {
+            JToken pathGet = webServiceJson[fieldPathSplited.First()];
+
+            if(pathGet?.Type == JTokenType.Object)
+            {
+                return validateField(fieldPathSplited[1..], (JObject)pathGet);
+            }
+            else if(pathGet?.Type == JTokenType.Array)
+            {
+                return validateField(fieldPathSplited[2..], (JObject)pathGet.FirstOrDefault());
+            }
+            else if (pathGet is not null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch 
+        {
+            return false;
+        }
     }
 }
