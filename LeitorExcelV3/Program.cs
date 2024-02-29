@@ -8,7 +8,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.

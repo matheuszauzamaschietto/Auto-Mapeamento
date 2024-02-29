@@ -35,22 +35,6 @@ public class DiscoveryClientFieldsService: Discoverator
         return fields;
     }
 
-    //private List<string> GetFieldsPath(string jsonPath, JObject jsonObject, List<string> fields)
-    //{
-    //    foreach(var field in jsonObject)
-    //    {
-    //        if(field.Value.Type != JTokenType.Object && field.Value.Type != JTokenType.Array)
-    //        {
-    //            fields.Add(MountJsonPath(jsonPath, field.Key));
-    //        }
-    //        else if (field.Value.Type == JTokenType.Object)
-    //        {
-    //            GetFieldsPath(MountJsonPath(jsonPath, field.Key), (JObject)field.Value, fields);
-    //        }
-    //    }
-    //    return fields;
-    //}
-
     private List<string> GetFieldsPath(string jsonPath, JObject jsonObject, List<string> fields)
     {
         try

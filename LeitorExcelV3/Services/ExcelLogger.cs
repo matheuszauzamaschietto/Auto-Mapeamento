@@ -7,6 +7,7 @@ public class ExcelLogger
 {
     public void SetClientResponse(ExcelWorksheet worksheet, string body, HttpStatusCode httpCode)
     {
-        worksheet.Cells["Z12"].SetCellValue<string>(body);
+        worksheet.Cells["Z12"].Value = body;
+        worksheet.Cells["Z13"].Value = httpCode;
     }
 }

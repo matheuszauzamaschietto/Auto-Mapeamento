@@ -53,6 +53,8 @@ public class ExcelController : Controller
                 List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<PlooFieldsModel>(connectionInfos);
                 var clientResponse = await requestService.SendClient(connectionInfos);
 
+                ExcelLogger excelLogger = new ExcelLogger();
+                excelLogger.SetClientResponse(worksheet, clientResponse.serializedBody, clientResponse.responseCode);
 
 
                 if (phases.DoDiscovery)
@@ -72,7 +74,9 @@ public class ExcelController : Controller
                     Console.WriteLine("TO IMPLEMENTANDO");
                 }
             }
-            package.SaveAs(filePath);
+
+            //package.Save();
+            package.SaveAs(new FileInfo(filePath));
         }
         byte[] bytes = System.IO.File.ReadAllBytes(filePath);
 

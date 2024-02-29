@@ -19,11 +19,11 @@ public class ConnectionInfos
     {
         int cont = 8;
         Dictionary<string, string> headers = new();
-        while (deafultConnectionWorkSheet.Cells["B" + (cont + 1)].GetCellValue<string>() is not null || deafultConnectionWorkSheet.Cells["D" + (cont + 1)].GetCellValue<string>() is not null)
+        while (deafultConnectionWorkSheet.Cells["B" + (cont + 1)].GetValue<string>() is not null || deafultConnectionWorkSheet.Cells["D" + (cont + 1)].GetValue<string>() is not null)
         {
             cont++;
-            headers.Add(deafultConnectionWorkSheet.Cells["B" + cont].GetCellValue<string>(),
-                        deafultConnectionWorkSheet.Cells["D" + cont].GetCellValue<string>());
+            headers.Add(deafultConnectionWorkSheet.Cells["B" + cont].GetValue<string>(),
+                        deafultConnectionWorkSheet.Cells["D" + cont].GetValue<string>());
         }
         return headers;
     }

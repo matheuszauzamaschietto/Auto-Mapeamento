@@ -10,8 +10,8 @@ public class PhasesModel
 
     public PhasesModel(ExcelWorksheet worksheet)
     {
-        DoDiscovery = worksheet.Cells["Z7"].GetCellValue<string>() == "Sim" ? true : false;
-        DoValidation = worksheet.Cells["Z8"].GetCellValue<string>() == "Sim" ? true : false;
-        DoImplementation = worksheet.Cells["Z9"].GetCellValue<string>() == "Sim" ? true : false;
+        DoDiscovery = worksheet.Cells["Z7"].GetValue<string>() == "Sim" ? true : false;
+        DoValidation = worksheet.Cells["Z8"].GetValue<string>() == "Sim" ? true : false;
+        DoImplementation = worksheet.Cells["Z9"].GetValue<string>() == "Sim" ? true : false;
     }
 }

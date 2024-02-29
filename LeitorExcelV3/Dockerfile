@@ -21,5 +21,6 @@ RUN dotnet publish "./LeitorExcelV3.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 
 FROM base AS final
 WORKDIR /app
+#RUN apt-get install libgdiplus=32.x
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "LeitorExcelV3.dll"]

@@ -18,11 +18,11 @@ public class ClientConnection
     {
         int cont = 8;
         Dictionary<string, string> headers = new();
-        while (deafultConnectionWorkSheet.Cells["B" + (cont + 1)].GetCellValue<string>() is not null || deafultConnectionWorkSheet.Cells["D" + (cont + 1)].GetCellValue<string>() is not null)
+        while (deafultConnectionWorkSheet.Cells["B" + (cont + 1)].GetValue<string>() is not null || deafultConnectionWorkSheet.Cells["D" + (cont + 1)].GetValue<string>() is not null)
         {
             cont++;
-            headers.Add(deafultConnectionWorkSheet.Cells["B" + cont].GetCellValue<string>(),
-                        deafultConnectionWorkSheet.Cells["D" + cont].GetCellValue<string>());
+            headers.Add(deafultConnectionWorkSheet.Cells["B" + cont].GetValue<string>(),
+                        deafultConnectionWorkSheet.Cells["D" + cont].GetValue<string>());
         }
         return headers;
     }
@@ -36,12 +36,12 @@ public class ClientConnection
 
     private string GetBody(ExcelWorksheet connectionWorkSheet)
     {
-        return connectionWorkSheet.Cells[CellDefaultPositions.BODY_CELL].GetCellValue<string>();
+        return connectionWorkSheet.Cells[CellDefaultPositions.BODY_CELL].GetValue<string>();
     }
 
     private HttpMethod? GetHttpMethod(ExcelWorksheet connectionWorkSheet)
     {
-        string sheetMethod = connectionWorkSheet.Cells[CellDefaultPositions.METHOD_CELL].GetCellValue<string>();
+        string sheetMethod = connectionWorkSheet.Cells[CellDefaultPositions.METHOD_CELL].GetValue<string>();
         switch (sheetMethod?.ToLower())
         {
             case ("post"): return HttpMethod.Post;
@@ -54,6 +54,6 @@ public class ClientConnection
 
     public string GetUrl(ExcelWorksheet connectionWorkSheet)
     {
-        return connectionWorkSheet.Cells[CellDefaultPositions.URL_CELL].GetCellValue<string>();
+        return connectionWorkSheet.Cells[CellDefaultPositions.URL_CELL].GetValue<string>();
     }
 }
