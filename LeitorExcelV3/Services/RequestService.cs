@@ -1,4 +1,5 @@
-﻿using LeitorExcelV3.Factories;
+﻿using LeitorExcelV3.Extensions;
+using LeitorExcelV3.Factories;
 using LeitorExcelV3.Models;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
@@ -21,17 +22,23 @@ public class RequestService
     public async Task<(string serializedBody, HttpStatusCode responseCode)> SendClient(ConnectionInfos connectionInfo)
     {
         HttpRequestMessage httpMessage = _httpRequestMessageFactory.Create(Enums.HttpRequestMessageFactoryEnum.CLIENT, connectionInfo);
-        HttpResponseMessage response = await Send(httpMessage);
+        HttpResponseMessage response = await SendRequest(httpMessage);
         return (await response?.Content?.ReadAsStringAsync() ?? "", response.StatusCode);
+    }
+
+    public async Task<HttpResponseMessage> SendPloomesField(ConnectionInfos connectionInfo, PlooFieldsModel field)
+    {
+        HttpRequestMessage httpMessage = _httpRequestMessageFactory.Create(Enums.HttpRequestMessageFactoryEnum.PLOOMES_FIELD, connectionInfo, field);
+        return await Send(httpMessage);
     }
 
     public async Task<List<T>?> SendPloomes<T>(ConnectionInfos connectionInfo)
     {
         HttpRequestMessage httpMessage = _httpRequestMessageFactory.Create(Enums.HttpRequestMessageFactoryEnum.PLOOMES, connectionInfo);
-        return (await Send<PlooBaseModel<T>?>(httpMessage)).Value;
+        return (await SendRequest<PlooBaseModel<T>?>(httpMessage)).Value;
     }
 
-    private async Task<HttpResponseMessage> Send(HttpRequestMessage httpMessage)
+    private async Task<HttpResponseMessage> SendRequest(HttpRequestMessage httpMessage)
     {
         HttpResponseMessage response = null;
         try
@@ -45,7 +52,7 @@ public class RequestService
         return response;
     }
 
-    private async Task<T?> Send<T>(HttpRequestMessage httpMessage)
+    private async Task<T?> SendRequest<T>(HttpRequestMessage httpMessage)
     {
         HttpResponseMessage response = null;
         try
@@ -57,6 +64,19 @@ public class RequestService
 
         }
         return JsonSerializer.Deserialize<T>(await response?.Content?.ReadAsStringAsync());
+    }
+
+    private async Task<HttpResponseMessage> Send(HttpRequestMessage requestMessage)
+    {
+        HttpStatusCode? statusCode = null;
+        HttpResponseMessage response;
+        do
+        {
+            HttpRequestMessage requestMessageCopy = requestMessage.Clone();
+            response = await _httpClient.SendAsync(requestMessageCopy);
+            statusCode = response.StatusCode;
+        } while (statusCode == HttpStatusCode.TooManyRequests);
+        return response;
     }
 
 }

@@ -16,7 +16,7 @@ public class PloomesConnection
 
     public void SetEntity(ExcelWorksheet worksheet)
     {
-        string entityFullName = worksheet.Cells["Z5"].GetValue<string>();
+        string entityFullName = worksheet.Cells[CellDefaultPositions.ENTITY_CELL].GetValue<string>();
         EntityId = GetCellTypeId(entityFullName ?? string.Empty);
         Url = $"https://api2.ploomes.com/Fields?$expand=OptionsTable($expand=Options),Type&$filter=EntityId+eq+{EntityId}";
     }

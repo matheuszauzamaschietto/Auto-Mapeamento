@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using LeitorExcelV3.Enums;
+using OfficeOpenXml;
 
 namespace LeitorExcelV3.Models;
 
@@ -10,8 +11,8 @@ public class PhasesModel
 
     public PhasesModel(ExcelWorksheet worksheet)
     {
-        DoDiscovery = worksheet.Cells["Z7"].GetValue<string>() == "Sim" ? true : false;
-        DoValidation = worksheet.Cells["Z8"].GetValue<string>() == "Sim" ? true : false;
-        DoImplementation = worksheet.Cells["Z9"].GetValue<string>() == "Sim" ? true : false;
+        DoDiscovery = worksheet.Cells[CellDefaultPositions.DISCOVERY_CELL].GetValue<string>() == "Sim" ? true : false;
+        DoValidation = worksheet.Cells[CellDefaultPositions.VALIDATION_CELL].GetValue<string>() == "Sim" ? true : false;
+        DoImplementation = worksheet.Cells[CellDefaultPositions.IMPLEMENTATION_CELL].GetValue<string>() == "Sim" ? true : false;
     }
 }

@@ -3,7 +3,9 @@ using LeitorExcelV3.Interfaces;
 using LeitorExcelV3.Models;
 using LeitorExcelV3.Services;
 using LeitorExcelV3.Services.Discovery;
+using LeitorExcelV3.Services.Implementation;
 using LeitorExcelV3.Services.Validatiion;
+using LeitorExcelV3.Services.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -47,8 +49,8 @@ public class ExcelController : Controller
                 if (connectionInfos.ClientConnection.Url is null || connectionInfos.ClientConnection.HttpMethod is null || connectionInfos.PloomesConnection.EntityId is null)
                     continue;
 
-                PhasesModel phases = new(worksheet);
-                RequestService requestService = new (_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
+                PhasesModel phases = new PhasesModel(worksheet);
+                RequestService requestService = new RequestService(_httpClientFactory.CreateClient("client"), new Factories.HttpRequestMessageFactory());
 
                 List<PlooFieldsModel>? plooFields = await requestService.SendPloomes<PlooFieldsModel>(connectionInfos);
                 var clientResponse = await requestService.SendClient(connectionInfos);
@@ -71,7 +73,8 @@ public class ExcelController : Controller
 
                 if (phases.DoImplementation)
                 {
-                    Console.WriteLine("TO IMPLEMENTANDO");
+                    IPrimaryService implementation = new ImplementationService(worksheet, _worksheetService, plooFields, requestService, connectionInfos);
+                    implementation.Execute();
                 }
             }
 

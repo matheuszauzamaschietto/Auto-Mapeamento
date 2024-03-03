@@ -3,5 +3,6 @@
 public enum HttpRequestMessageFactoryEnum
 {
     CLIENT,
-    PLOOMES
+    PLOOMES,
+    PLOOMES_FIELD
 }

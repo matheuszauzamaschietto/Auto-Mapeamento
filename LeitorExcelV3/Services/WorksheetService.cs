@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace LeitorExcelV3.Services;
 
@@ -59,5 +60,12 @@ public class WorksheetService
             row++;
         } while (fieldsWritedCount < fieldsToWrite.Count);
         return worksheet;
+    }
+
+    public int GetCellTypeId(string text)
+    {
+        int typeId = 0;
+        int.TryParse(Regex.Match(text, @"(?<=\[)\d{1,2}(?=\])").Value, out typeId);
+        return typeId;
     }
 }

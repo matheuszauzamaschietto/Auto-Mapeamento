@@ -1,8 +1,7 @@
 ﻿using LeitorExcelV3.Interfaces;
-using LeitorExcelV3.Services.Discovery;
 using OfficeOpenXml;
 
-namespace LeitorExcelV3.Services;
+namespace LeitorExcelV3.Services.Discovery;
 
 public class DiscoveryService : IPrimaryService
 {

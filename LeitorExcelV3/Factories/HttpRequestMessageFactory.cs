@@ -1,7 +1,7 @@
 ﻿using LeitorExcelV3.Enums;
 using LeitorExcelV3.Models;
 using System.Net.Http.Headers;
-using LeitorExcelV3.Models;
+using System.Text.Json;
 
 namespace LeitorExcelV3.Factories;
 
@@ -12,7 +12,7 @@ public class HttpRequestMessageFactory
         
     }
 
-    public HttpRequestMessage? Create(HttpRequestMessageFactoryEnum type, ConnectionInfos connectionInfo)
+    public HttpRequestMessage? Create(HttpRequestMessageFactoryEnum type, ConnectionInfos connectionInfo, PlooFieldsModel? field = null)
     {
         if(type == HttpRequestMessageFactoryEnum.CLIENT)
         {
@@ -21,6 +21,10 @@ public class HttpRequestMessageFactory
         else if (type == HttpRequestMessageFactoryEnum.PLOOMES)
         {
             return CreatePloomesMessage(connectionInfo);
+        }
+        else if (type == HttpRequestMessageFactoryEnum.PLOOMES_FIELD)
+        {
+            return CreatePloomesFieldCreationMessage(connectionInfo, field);
         }
         return null;
     }
@@ -34,6 +38,20 @@ public class HttpRequestMessageFactory
         return httpMessage;
     }
 
+    private HttpRequestMessage CreatePloomesFieldCreationMessage(ConnectionInfos connectionInfo, PlooFieldsModel field)
+    {
+        HttpRequestMessage httpMessage = new();
+        httpMessage.Method = HttpMethod.Post;
+
+        httpMessage.Content = new StringContent(JsonSerializer.Serialize(field,  new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        }));
+
+        SetHeaders(connectionInfo.PloomesConnection.Headers, httpMessage.Headers);
+        httpMessage.RequestUri = new Uri(connectionInfo.PloomesConnection.Url);
+        return httpMessage;
+    }
 
     private HttpRequestMessage CreateClientMessage(ConnectionInfos connectionInfo)
     {

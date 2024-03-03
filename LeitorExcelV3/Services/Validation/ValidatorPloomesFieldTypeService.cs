@@ -20,7 +20,7 @@ public class ValidatorPloomesFieldTypeService : Validator
         {
             var fieldName = fieldsName[i];
             var fieldType = fieldsType[i];
-            int fieldTypeID = GetCellTypeId(fieldType["name"]);
+            int fieldTypeID = WorksheetService.GetCellTypeId(fieldType["name"]);
 
             ExcelRange cell = Worksheet.Cells[fieldType["cordenate"]];
 
@@ -34,10 +34,5 @@ public class ValidatorPloomesFieldTypeService : Validator
             }
         }
         NextValidator?.Execute();
-    }
-
-    private int GetCellTypeId(string text)
-    {
-        return int.Parse(Regex.Match(text, @"(?<=\[)\d{1,2}(?=\])").Value);
     }
 }

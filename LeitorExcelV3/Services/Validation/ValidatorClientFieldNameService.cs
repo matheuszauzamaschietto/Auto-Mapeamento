@@ -6,6 +6,23 @@ using System.Text.RegularExpressions;
 
 namespace LeitorExcelV3.Services.Validatiion;
 
+//{
+//    "Name": "Opção",
+//    "EntityId": 2,
+//    "SecondaryEntityId": null,
+//    "TypeId": 2,
+//    "OptionsTable": {
+//        "Name": "Opções",
+//        "Options":[
+//            {
+//                "Name": "OP"
+//            }
+//        ]
+//    },
+//    "Multiple": true,
+//    "Required": false
+//}
+
 public class ValidatorClientFieldNameService : Validator
 {
     private readonly string _deserializedRequest;

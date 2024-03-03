@@ -3,7 +3,7 @@ using LeitorExcelV3.Models;
 using LeitorExcelV3.Services.Validatiion;
 using OfficeOpenXml;
 
-namespace LeitorExcelV3.Services;
+namespace LeitorExcelV3.Services.Validation;
 
 public class ValidationService : IPrimaryService
 {
