@@ -38,7 +38,7 @@ public class ImplementatePloomesFields : Implementator
 
     private async Task CreateFieldAtPloomes(PlooFieldsModel field, ExcelRange allowCreationCell)
     {
-        HttpResponseMessage responseMessage = await _requestService.SendPloomesField(_connectionInfos, field);
+        HttpResponseMessage responseMessage = _requestService.SendPloomesField(_connectionInfos, field).Result;
         if (responseMessage.IsSuccessStatusCode)
         {
             WorksheetService.SetCellAsFind(allowCreationCell);

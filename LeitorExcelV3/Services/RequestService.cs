@@ -75,8 +75,12 @@ public class RequestService
             HttpRequestMessage requestMessageCopy = requestMessage.Clone();
             response = await _httpClient.SendAsync(requestMessageCopy);
             statusCode = response.StatusCode;
-        } while (statusCode == HttpStatusCode.TooManyRequests);
-        return response;
+            if(statusCode != HttpStatusCode.TooManyRequests)
+            {
+                return response;
+            }
+            Thread.Sleep(1000);
+        } while (true);
     }
 
 }

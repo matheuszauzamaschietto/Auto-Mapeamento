@@ -70,7 +70,7 @@ public class ExcelController : Controller
                     IPrimaryService Validation = new ValidationService(worksheet, _worksheetService, clientResponse.serializedBody, plooFields);
                     Validation.Execute();
                 }
-
+                 
                 if (phases.DoImplementation)
                 {
                     IPrimaryService implementation = new ImplementationService(worksheet, _worksheetService, plooFields, requestService, connectionInfos);
